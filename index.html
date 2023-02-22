@@ -5,8 +5,18 @@
     <title>Title</title>
 </head>
 <body>
-    <object type="text/html" data="http://127.0.0.1:3000" style="width:100%; height:100%">
-    <p>backup content</p>
-    </object>
+Руддщ
+    <div id="content"></div>
+
+    <script>
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'http://127.0.0.1:3000', true);
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          document.getElementById('content').innerHTML = xhr.responseText;
+        }
+      };
+      xhr.send();
+    </script>
 </body>
 </html>

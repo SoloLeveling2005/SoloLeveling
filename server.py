@@ -1,9 +1,9 @@
 # Подключаем необходимые модули
 from flask import Flask, render_template, redirect
+from flask_cors import CORS
 
-# Создаем экземпляр приложения Flask
 app = Flask(__name__)
-
+CORS(app)
 
 # Создаем маршрут для главной страницы
 @app.route('/')
