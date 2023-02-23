@@ -100,114 +100,142 @@ class MainWindow(QMainWindow):
     # constructor
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-
+    
         grip = QSizeGrip(self)
         self.setCorner(Qt.BottomRightCorner, Qt.RightDockWidgetArea)
         grip.setVisible(True)
         self.setWindowFlags(Qt.CustomizeWindowHint)
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setMaximumHeight(QApplication.desktop().availableGeometry().height())
 
+        # получаем размеры экрана
         desktop = app.desktop()
         self.rect = desktop.availableGeometry()
         print(self.rect)
-        # todo Создаем режим вкладок
+        # Создаем режим вкладок
         self.tabs = QTabWidget()
-
-        # Метод setDocumentMode(True) устанавливает режим документа для QTabWidget, что означает, что каждая вкладка
-        # будет иметь свой набор инструментов, относящихся к содержимому этой вкладки. В этом режиме, каждая вкладка
-        # будет иметь свой набор кнопок управления, включая кнопки "Назад", "Вперед", "Обновить", а также адресную
-        # строку для ввода URL. Это позволяет удобнее управлять содержимым каждой вкладки независимо друг от друга.
         self.tabs.setDocumentMode(True)
-
-        # кликнув по свободному пространству на виджете tabs мы создадим новую вкладку
+        self.tabs.setStyleSheet("background-color:grey;")
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
-
-        # adding action when tab is changed
         self.tabs.currentChanged.connect(self.current_tab_changed)
-
-        # making tabs closeable
         self.tabs.setTabsClosable(True)
-
-        # adding action when tab close is requested
         self.tabs.tabCloseRequested.connect(self.close_current_tab)
 
         # making tabs as central widget
         self.setCentralWidget(self.tabs)
 
-        # # creating a status bar
-        # self.status = QStatusBar()
-        #
-        # # setting status bar to the main window
-        # self.setStatusBar(self.status)
+        # creating a status bar
+        self.status = QStatusBar()
+        self.setStatusBar(self.status)
 
         # creating a tool bar for navigation
         navtb = QToolBar("Navigation")
+        navtb.setStyleSheet("background-color:black; color:white; padding:5px;")
 
         # adding tool bar tot he main window
         self.addToolBar(navtb)
 
         # creating back action
-        back_btn = QAction("◄", self)
+        icon = QIcon("left.png")
+        left_button = QToolButton()
+        left_button.setStyleSheet("width:10px;margin:3px;")
+        left_button.clicked.connect(lambda: self.tabs.currentWidget().back())
+        left_button.setIcon(icon)
+        navtb.addWidget(left_button)
 
-        # setting status tip
-        back_btn.setStatusTip("Back to previous page")
-
-        # adding action to back button
-        # making current tab to go back
-        back_btn.triggered.connect(lambda: self.tabs.currentWidget().back())
-
-        # adding this to the navigation tool bar
-        navtb.addAction(back_btn)
 
         # similarly adding next button
-        next_btn = QAction("►", self)
-        next_btn.setStatusTip("Forward to next page")
-        next_btn.triggered.connect(lambda: self.tabs.currentWidget().forward())
-        navtb.addAction(next_btn)
+        icon = QIcon("right.png")
+        right_button = QToolButton()
+        right_button.setStyleSheet("width:10px;margin:3px;")
+        right_button.clicked.connect(lambda: self.tabs.currentWidget().forward())
+        right_button.setIcon(icon)
+        navtb.addWidget(right_button)
+
 
         # similarly adding reload button
-        reload_btn = QAction("Reload", self)
-        reload_btn.setStatusTip("Reload page")
-        reload_btn.triggered.connect(lambda: self.tabs.currentWidget().reload())
-        navtb.addAction(reload_btn)
+        icon = QIcon("reload.png")
+        reload_button = QToolButton()
+        reload_button.setStyleSheet("width:10px;margin:1px;")
+        reload_button.clicked.connect(lambda: self.tabs.currentWidget().reload())
+        reload_button.setIcon(icon)
+        navtb.addWidget(reload_button)
 
         # creating home action
-        home_btn = QAction("Home", self)
-        home_btn.setStatusTip("Go home")
-
-        # adding action to home button
+        icon = QIcon("home.png")
+        home_btn = QToolButton()
+        home_btn.setStyleSheet("width:10px;margin:3px;")
         home_btn.triggered.connect(self.navigate_home)
-        navtb.addAction(home_btn)
+        home_btn.setIcon(icon)
+        navtb.addWidget(home_btn)
+
 
         # adding a separator
         navtb.addSeparator()
 
         # creating a line edit widget for URL
         self.urlbar = QLineEdit()
-
-        # adding action to line edit when return key is pressed
+        self.urlbar.setStyleSheet("padding:4px 10px; border-radius:6px; border:1px solid white;")
         self.urlbar.returnPressed.connect(self.navigate_to_url)
 
-        # adding line edit to
         navtb.addWidget(self.urlbar)
 
-        # similarly adding stop action
-        stop_btn = QAction("Stop", self)
-        stop_btn.setStatusTip("Stop loading current page")
-        stop_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
-        navtb.addAction(stop_btn)
+
+        # скрыть, закрыть, свернуть
+        icon = QIcon("roll_up_in_window.png")
+        close_button = QToolButton()
+        close_button.clicked.connect(self.showMinimized)
+        close_button.setStyleSheet("width:10px;margin:3px;")
+        close_button.setIcon(icon)
+        navtb.addWidget(close_button)
+
+        icon = QIcon("roll_up.png")
+        close_button = QToolButton()
+        close_button.clicked.connect(self.maximize)
+        close_button.setStyleSheet("width:10px;margin:3px;")
+        close_button.setIcon(icon)
+        navtb.addWidget(close_button)
+
+        icon = QIcon("close.png")
+        close_button = QToolButton()
+        close_button.clicked.connect(self.close)
+        close_button.setStyleSheet("width:10px;margin:3px;")
+        close_button.setIcon(icon)
+        navtb.addWidget(close_button)
+
 
         # creating first tab
         self.add_new_tab(QUrl('http://www.google.com'), 'Homepage')
-        self.resize(self.rect.width(), self.rect.height())
+        self.setGeometry(0,0,self.rect.width(), self.rect.height())
+
         # showing all the components
         self.show()
 
         # setting window title
         self.setWindowTitle("SoloLeveling")
 
+        self.tabs.setStyleSheet("""
 
+
+                QTabBar::tab {
+                    background-color: #161a1d;
+                    color: white;
+                    border-left: 1px solid gray;
+                    border-bottom: 1px solid gray;
+                    border-right: 1px solid gray;
+                    border-bottom-left-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                    padding: 4px;
+                    margin: 0 3px;
+                    
+                }
+                QTabBar::tab:selected {
+                    background-color: black;
+                    border-color: white;
+                }
+            """)
     # method for adding new tab
-    def add_new_tab(self, qurl=None, label="Blank"):
+    def add_new_tab(self, qurl=None, label="Homepage"):
 
         # if url is blank
         if qurl is None:
@@ -239,7 +267,6 @@ class MainWindow(QMainWindow):
         browser.urlChanged.connect(lambda qurl, browser=browser:
                                    self.update_urlbar(qurl, browser))
 
-
         # Эта строка кода устанавливает соединение между сигналом loadFinished объекта QWebEngineView и
         # лямбда-функцией, которая обновляет заголовок текущей вкладки в QTabWidget после загрузки страницы.
         #
@@ -247,7 +274,8 @@ class MainWindow(QMainWindow):
         # который сообщает об окончании загрузки страницы.
 
         browser.loadFinished.connect(lambda _, i=i, browser=browser:
-                                     self.tabs.setTabText(i, browser.page().title()[:10] + "...") if len(browser.page().title())>10 else browser.page().title())
+                                     self.tabs.setTabText(i, browser.page().title()[:10] + "...") if len(
+                                         browser.page().title()) > 10 else browser.page().title())
 
     # when double clicked is pressed on tabs
     def tab_open_doubleclick(self, i):
@@ -327,9 +355,44 @@ class MainWindow(QMainWindow):
         # set cursor position
         self.urlbar.setCursorPosition(0)
 
+    def mousePressEvent(self, event):
+        # Получаем начальные координаты мыши при нажатии на левую кнопку мыши
+        if event.button() == Qt.LeftButton:
+            # print(self.rect.width())
+            # self.resize(self.rect.width()//2, self.rect.height()//2)
+            self.offset = event.pos()
+
+    def mouseMoveEvent(self, event):
+        # Перетаскиваем окно, если левая кнопка мыши была нажата и перемещена на новые координаты
+        if event.buttons() == Qt.LeftButton:
+            x = event.globalX()
+            y = event.globalY()
+            print(x - self.offset.x(), y - self.offset.y())
+            self.move(x - self.offset.x(), y - self.offset.y())
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.mousePressed = False
+            event.accept()
+            print(event.globalY())
+            if event.globalY() < 20 or event.globalY() == 0:
+                self.setGeometry(0,0,self.rect.width(), self.rect.height())
+                print("self.showMaximized()")
+
+    def maximize(self):
+        # Разворачиваем или сворачиваем окно при нажатии на кнопку "Развернуть"
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            self.showMaximized()
+
 
 # todo Program running
 app = QApplication(sys.argv)
 app.setApplicationName("SoloLeveling")
+desktop = app.desktop()
+rect = desktop.availableGeometry()
 window = MainWindow()
+window.setGeometry(0,0,rect.width(), rect.height())
+window.setStyleSheet("padding:0;")
 app.exec_()
