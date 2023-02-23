@@ -106,7 +106,9 @@ class MainWindow(QMainWindow):
         grip.setVisible(True)
         self.setWindowFlags(Qt.CustomizeWindowHint)
 
-
+        desktop = app.desktop()
+        self.rect = desktop.availableGeometry()
+        print(self.rect)
         # todo Создаем режим вкладок
         self.tabs = QTabWidget()
 
@@ -131,11 +133,11 @@ class MainWindow(QMainWindow):
         # making tabs as central widget
         self.setCentralWidget(self.tabs)
 
-        # creating a status bar
-        self.status = QStatusBar()
-
-        # setting status bar to the main window
-        self.setStatusBar(self.status)
+        # # creating a status bar
+        # self.status = QStatusBar()
+        #
+        # # setting status bar to the main window
+        # self.setStatusBar(self.status)
 
         # creating a tool bar for navigation
         navtb = QToolBar("Navigation")
@@ -185,7 +187,7 @@ class MainWindow(QMainWindow):
         # adding action to line edit when return key is pressed
         self.urlbar.returnPressed.connect(self.navigate_to_url)
 
-        # adding line edit to tool bar
+        # adding line edit to
         navtb.addWidget(self.urlbar)
 
         # similarly adding stop action
@@ -196,12 +198,13 @@ class MainWindow(QMainWindow):
 
         # creating first tab
         self.add_new_tab(QUrl('http://www.google.com'), 'Homepage')
-
+        self.resize(self.rect.width(), self.rect.height())
         # showing all the components
         self.show()
 
         # setting window title
         self.setWindowTitle("SoloLeveling")
+
 
     # method for adding new tab
     def add_new_tab(self, qurl=None, label="Blank"):

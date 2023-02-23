@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QApp
 class Window(QWidget):
     def __init__(self):
         super().__init__()
+
+
         self.setWindowFlags(Qt.CustomizeWindowHint | Qt.FramelessWindowHint)
 
         # Растягиваем окно на всю ширину экрана при достижении верхней границы
