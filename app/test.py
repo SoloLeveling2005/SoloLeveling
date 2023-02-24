@@ -1,87 +1,23 @@
-# # from PyQt5.QtCore import QUrl
-# # from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
-# # from PyQt5.QtWidgets import QApplication
-# #
-# # app = QApplication([])
-# #
-# # view = QWebEngineView()
-# # page = QWebEnginePage()
-# # view.setPage(page)
-# #
-# # # def on_url_changed(url):
-# # #     print('URL changed:', url.toString())
-# # #
-# # # page.urlChanged.connect(on_url_changed)
-# #
-# # view.load(QUrl('https://www.google.com'))
-# # view.show()
-# #
-# # app.exec_()
-# # #
-#
 # from PyQt5.QtCore import QUrl
-# from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QLineEdit, QPushButton, \
-#     QSizePolicy
-# from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+# from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
+# from PyQt5.QtWidgets import QApplication
 #
+# app = QApplication([])
 #
-# class Browser(QWidget):
-#     def __init__(self):
-#         super().__init__()
+# view = QWebEngineView()
+# page = QWebEnginePage()
+# view.setPage(page)
 #
-#         self.tabs = QTabWidget()
-#         self.tabs.setMinimumSize(1024, 768)
-#         self.tabs.setTabsClosable(True)
-#         self.tabs.tabCloseRequested.connect(self.close_tab)
+# def on_url_changed(url):
+#     print('URL changed:', url.toString())
 #
-#         self.new_tab_button = QPushButton('+')
-#         self.new_tab_button.clicked.connect(self.new_tab)
+# page.urlChanged.connect(on_url_changed)
 #
-#         self.url_input = QLineEdit()
-#         self.url_input.returnPressed.connect(self.load_url)
+# view.load(QUrl('https://www.google.com'))
+# view.show()
 #
-#         self.layout = QVBoxLayout()
-#         self.hlayout = QHBoxLayout()
-#         self.hlayout.addWidget(self.url_input)
-#         self.hlayout.addWidget(self.new_tab_button)
-#         self.layout.addLayout(self.hlayout)
-#         self.layout.addWidget(self.tabs)
+# app.exec_()
 #
-#         self.setLayout(self.layout)
-#         # self.new_tab()
-#         self.new_tab()
-#         self.setWindowTitle("Browser")
-#
-#     def new_tab(self):
-#         view = QWebEngineView()
-#         page = QWebEnginePage()
-#         view.setPage(page)
-#         view.setMinimumSize(1024, 768)
-#
-#         view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-#
-#         view.load(QUrl("https://www.google.com"))
-#
-#         index = self.tabs.addTab(view, "New Tab")
-#         self.tabs.setCurrentIndex(index)
-#
-#     def close_tab(self, index):
-#         if self.tabs.count() == 1:
-#             self.close()
-#         else:
-#             self.tabs.removeTab(index)
-#
-#     def load_url(self):
-#         url = self.url_input.text()
-#         if url:
-#             self.tabs.currentWidget().load(QUrl(url))
-#
-#
-# if __name__ == "__main__":
-#     app = QApplication([])
-#     browser = Browser()
-#     browser.show()
-#     app.exec_()
 
 
 # importing required libraries
@@ -100,7 +36,7 @@ class MainWindow(QMainWindow):
     # constructor
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-    
+
         grip = QSizeGrip(self)
         self.setCorner(Qt.BottomRightCorner, Qt.RightDockWidgetArea)
         grip.setVisible(True)
@@ -130,6 +66,7 @@ class MainWindow(QMainWindow):
 
         # creating a tool bar for navigation
         navtb = QToolBar("Navigation")
+        navtb.setMovable(False)
         navtb.setStyleSheet("background-color:black; color:white; padding:5px;")
 
         # adding tool bar tot he main window
@@ -143,7 +80,6 @@ class MainWindow(QMainWindow):
         left_button.setIcon(icon)
         navtb.addWidget(left_button)
 
-
         # similarly adding next button
         icon = QIcon("right.png")
         right_button = QToolButton()
@@ -151,7 +87,6 @@ class MainWindow(QMainWindow):
         right_button.clicked.connect(lambda: self.tabs.currentWidget().forward())
         right_button.setIcon(icon)
         navtb.addWidget(right_button)
-
 
         # similarly adding reload button
         icon = QIcon("reload.png")
@@ -165,10 +100,9 @@ class MainWindow(QMainWindow):
         icon = QIcon("home.png")
         home_btn = QToolButton()
         home_btn.setStyleSheet("width:10px;margin:3px;")
-        home_btn.triggered.connect(self.navigate_home)
+        home_btn.clicked.connect(self.navigate_home)
         home_btn.setIcon(icon)
         navtb.addWidget(home_btn)
-
 
         # adding a separator
         navtb.addSeparator()
@@ -179,7 +113,6 @@ class MainWindow(QMainWindow):
         self.urlbar.returnPressed.connect(self.navigate_to_url)
 
         navtb.addWidget(self.urlbar)
-
 
         # скрыть, закрыть, свернуть
         icon = QIcon("roll_up_in_window.png")
@@ -203,10 +136,10 @@ class MainWindow(QMainWindow):
         close_button.setIcon(icon)
         navtb.addWidget(close_button)
 
-
         # creating first tab
         self.add_new_tab(QUrl('http://www.google.com'), 'Homepage')
-        self.setGeometry(0,0,self.rect.width(), self.rect.height())
+
+        self.setGeometry(0, 0, self.rect.width(), self.rect.height())
 
         # showing all the components
         self.show()
@@ -234,6 +167,13 @@ class MainWindow(QMainWindow):
                     border-color: white;
                 }
             """)
+
+        # self.urlChanged.connect(self.on_url_changed)
+
+    # url control
+    def on_url_changed(self, url):
+        print('URL changed:', url.toString())
+
     # method for adding new tab
     def add_new_tab(self, qurl=None, label="Homepage"):
 
@@ -244,10 +184,10 @@ class MainWindow(QMainWindow):
 
         # creating a QWebEngineView object
         browser = QWebEngineView()
+        browser.setStyleSheet("border:0;")
 
         # setting url to browser
         browser.setUrl(qurl)
-
         # setting tab index
         i = self.tabs.addTab(browser, label)
         self.tabs.setCurrentIndex(i)
@@ -304,7 +244,7 @@ class MainWindow(QMainWindow):
         # if there is only one tab
         if self.tabs.count() < 2:
             # do nothing
-            return
+            self.close()
 
         # else remove the tab
         self.tabs.removeTab(i)
@@ -323,7 +263,7 @@ class MainWindow(QMainWindow):
 
     # action to go to home
     def navigate_home(self):
-
+        print("Go home")
         # go to google
         self.tabs.currentWidget().setUrl(QUrl("http://www.google.com"))
 
@@ -376,7 +316,7 @@ class MainWindow(QMainWindow):
             event.accept()
             print(event.globalY())
             if event.globalY() < 20 or event.globalY() == 0:
-                self.setGeometry(0,0,self.rect.width(), self.rect.height())
+                self.setGeometry(0, 0, self.rect.width(), self.rect.height())
                 print("self.showMaximized()")
 
     def maximize(self):
@@ -393,6 +333,6 @@ app.setApplicationName("SoloLeveling")
 desktop = app.desktop()
 rect = desktop.availableGeometry()
 window = MainWindow()
-window.setGeometry(0,0,rect.width(), rect.height())
+window.setGeometry(0, 0, rect.width(), rect.height())
 window.setStyleSheet("padding:0;")
 app.exec_()

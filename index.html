@@ -1,22 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<title>Example</title>
+	<style>
+		/* стили для вкладок */
+		.tab {
+			background-color: #f2f2f2;
+			border: 1px solid #ccc;
+			padding: 10px;
+			cursor: pointer;
+			display: inline-block;
+		}
+
+		.tab.active {
+			background-color: #ccc;
+			border-bottom: none;
+		}
+
+		/* стили для меню */
+		.menu {
+			background-color: #333;
+			color: #fff;
+			padding: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		/* стили для контента */
+		.content {
+			padding: 10px;
+			border: 1px solid #ccc;
+		}
+	</style>
 </head>
 <body>
-Руддщ
-    <div id="content"></div>
+	<div class="menu">
+		<h1>Заголовок</h1>
+		<nav>
+			<ul>
+				<li><a href="#" class="tab active">Вкладка 1</a></li>
+				<li><a href="#" class="tab">Вкладка 2</a></li>
+				<li><a href="#" class="tab">Вкладка 3</a></li>
+			</ul>
+		</nav>
+	</div>
 
-    <script>
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://translate.google.com/', true);
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          document.getElementById('content').innerHTML = xhr.responseText;
-        }
-      };
-      xhr.send();
-    </script>
+	<div class="content">
+		<div id="tab-1" class="tab-content active">
+			<h2>Контент для вкладки 1</h2>
+			<p>Здесь будет содержание вкладки 1</p>
+		</div>
+
+		<div id="tab-2" class="tab-content">
+			<h2>Контент для вкладки 2</h2>
+			<p>Здесь будет содержание вкладки 2</p>
+		</div>
+
+		<div id="tab-3" class="tab-content">
+			<h2>Контент для вкладки 3</h2>
+			<p>Здесь будет содержание вкладки 3</p>
+		</div>
+	</div>
+
+	<script>
+		// скрипт для переключения вкладок
+		const tabs = document.querySelectorAll('.tab');
+		const tabContents = document.querySelectorAll('.tab-content');
+
+		tabs.forEach(tab => {
+			tab.addEventListener('click', () => {
+				const tabId = tab.dataset.tabId;
+
+				tabs.forEach(tab => {
+					tab.classList.remove('active');
+				});
+
+				tab.classList.add('active');
+
+				tabContents.forEach(tabContent => {
+					tabContent.classList.remove('active');
+				});
+
+				document.querySelector(`#${tabId}`).classList.add('active');
+			});
+		});
+	</script>
 </body>
 </html>
+``
