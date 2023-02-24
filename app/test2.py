@@ -1,23 +1,8 @@
-# from PyQt5.QtCore import QUrl
-# from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineView
-# from PyQt5.QtWidgets import QApplication
-#
-# app = QApplication([])
-#
-# view = QWebEngineView()
-# page = QWebEnginePage()
-# view.setPage(page)
-#
+
 # def on_url_changed(url):
 #     print('URL changed:', url.toString())
 #
 # page.urlChanged.connect(on_url_changed)
-#
-# view.load(QUrl('https://www.google.com'))
-# view.show()
-#
-# app.exec_()
-#
 
 
 # importing required libraries
