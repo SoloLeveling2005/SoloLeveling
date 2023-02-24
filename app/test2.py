@@ -34,11 +34,12 @@ class MainWindow(QMainWindow):
 
         grip = QSizeGrip(self)
         grip.setVisible(True)
+        grip.setStyleSheet("padding:0; margin:0;")
 
         # Создаем виджет вкладок
         self.tabs = QTabWidget()
         self.tabs.setDocumentMode(True)
-        self.tabs.setStyleSheet("background-color:grey;")
+        self.tabs.setStyleSheet("background-color:grey; margin:0; padding:0;")
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
         self.tabs.currentChanged.connect(self.current_tab_changed)
         self.tabs.setTabsClosable(True)
@@ -55,7 +56,6 @@ class MainWindow(QMainWindow):
 
         # отображение страницы
         self.show()
-
         # стилизируем
         self.tabs.setStyleSheet("""
                                     QTabBar::tab {
@@ -66,8 +66,7 @@ class MainWindow(QMainWindow):
                                         border-right: 1px solid gray;
                                         border-bottom-left-radius: 4px;
                                         border-bottom-right-radius: 4px;
-                                        padding: 4px;
-                                        margin: 0 3px;
+
                                     }
                                     QTabBar::tab:selected {
                                         background-color: black;
@@ -80,7 +79,6 @@ class MainWindow(QMainWindow):
         self.tool_bar = QToolBar("Navigation")
         self.tool_bar.setMovable(False)
         self.tool_bar.setStyleSheet("background-color:black; color:white; padding:5px;")
-
         # adding tool bar tot he main window
         # self.addToolBar(self.tool_bar)
 
@@ -143,23 +141,31 @@ class MainWindow(QMainWindow):
 
         # создаем новый toolbar для каждой вкладки
         tool_bar = self.new_toolbar()
+
         browser = QWebEngineView()
         layout = QVBoxLayout()
         layout.addWidget(tool_bar)
         layout.addWidget(browser)
-
+        layout.setContentsMargins(0,0,0,0)
         browser.load(QUrl(qurl))
 
         widget = QWidget()
         widget.setLayout(layout)
+
         i = self.tabs.addTab(widget, label)
 
         # сохраняем ссылку на toolbar в user data для вкладки
         self.tabs.setCurrentIndex(i)
 
+        browser.urlChanged.connect(lambda qurl, browser=browser:
+                                   self.update_urlbar(qurl, browser))
+
+        browser.loadFinished.connect(lambda _, i=i, browser=browser:
+                                     self.tabs.setTabText(i, browser.page().title()[:10] + "...") if len(
+                                         browser.page().title()) > 10 else browser.page().title())
+
         # сохраняем ссылку на текущий QWebEngineView
         self.browser = browser
-
 
     # открытие новой вкладки при двойном клике
     def tab_open_doubleclick(self, i):
@@ -170,24 +176,16 @@ class MainWindow(QMainWindow):
             # creating a new tab
             self.add_new_tab()
 
-    # when tab is changed
-    # def current_tab_changed(self, i):
-    #
-    #     # get the curl
-    #     qurl = self.tabs.currentWidget().url()
-    #
-    #     # update the url
-    #     self.update_urlbar(qurl, self.tabs.currentWidget())
-    #
-    #     # update the title
-    #     self.update_title(self.tabs.currentWidget())
     def current_tab_changed(self, i):
+        # print(self.tabs.currentWidget().url())
+        print(i)
         widget = self.tabs.widget(i)
-        if isinstance(widget, QWebEngineView):
+        try:
             qurl = widget.url()
             self.update_urlbar(qurl, self.tabs.currentWidget())
             self.update_title(self.tabs.currentWidget())
-
+        except:
+            pass
     # закрытие вкладки
     def close_current_tab(self, i):
 
@@ -205,6 +203,7 @@ class MainWindow(QMainWindow):
         # if signal is not from the current tab
         if browser != self.tabs.currentWidget():
             # do nothing
+            print("Noo")
             return
 
         # get the page title
@@ -220,9 +219,8 @@ class MainWindow(QMainWindow):
     # method for navigate to url
     def navigate_to_url(self):
 
-        # get the line edit text
         # convert it to QUrl object
-        q = QUrl(self.url_bar.text())
+        q = QUrl(self.url.text())
 
         # if scheme is blank
         if q.scheme() == "":
@@ -230,15 +228,15 @@ class MainWindow(QMainWindow):
             q.setScheme("http")
 
         # set the url
-        self.tabs.currentWidget().setUrl(q)
+        self.browser.setUrl(q)
 
     # method to update the url
     def update_urlbar(self, q, browser=None):
-
+        print("update_urlbar")
         # If this signal is not from the current tab, ignore
-        if browser != self.tabs.currentWidget():
-            return
-        # print(q.toString())
+        # if browser != self.tabs.currentWidget():
+        #     return
+
         # set text to the url bar
         self.url_bar.setText(q.toString())
 
@@ -283,5 +281,4 @@ desktop = app.desktop()
 rect = desktop.availableGeometry()
 window = MainWindow()
 window.setGeometry(0, 0, rect.width(), rect.height())
-window.setStyleSheet("padding:0;")
 app.exec_()
