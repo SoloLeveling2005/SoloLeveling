@@ -31,6 +31,7 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.setMaximumHeight(QApplication.desktop().availableGeometry().height())
         self.setGeometry(0, 0, self.rect.width(), self.rect.height())
+        self.setStyleSheet("background-color:#202124;")
 
         grip = QSizeGrip(self)
         grip.setVisible(True)
@@ -39,7 +40,7 @@ class MainWindow(QMainWindow):
         # Создаем виджет вкладок
         self.tabs = QTabWidget()
         self.tabs.setDocumentMode(True)
-        self.tabs.setStyleSheet("background-color:grey; margin:0; padding:0;")
+        self.tabs.setStyleSheet("background-color:#202124; margin:0; padding:0;")
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
         self.tabs.currentChanged.connect(self.current_tab_changed)
         self.tabs.setTabsClosable(True)
@@ -58,20 +59,23 @@ class MainWindow(QMainWindow):
         self.show()
         # стилизируем
         self.tabs.setStyleSheet("""
+                                    * {
+                                        font-size:18px;
+                                    }
+                                    
+                                    
                                     QTabBar::tab {
-                                        background-color: #161a1d;
+                                        background-color: #202124;
                                         color: white;
-                                        border-left: 1px solid gray;
-                                        border-bottom: 1px solid gray;
-                                        border-right: 1px solid gray;
-                                        border-bottom-left-radius: 4px;
-                                        border-bottom-right-radius: 4px;
-
+                                        padding: 8px 12px;
+                                        margin:0;
                                     }
                                     QTabBar::tab:selected {
                                         background-color: black;
                                         border-color: white;
+                                        
                                     }
+                                    QTabWidget::pane {border: 0;padding:0;margin:0;}
                                 """)
 
     # создаем панель инструментов
@@ -276,9 +280,10 @@ class MainWindow(QMainWindow):
 
 # todo Program running
 app = QApplication(sys.argv)
-app.setApplicationName("SoloLeveling")
+app.setStyleSheet("padding-top:200px;")
 desktop = app.desktop()
 rect = desktop.availableGeometry()
 window = MainWindow()
+window.setContentsMargins(0,0,0,0)
 window.setGeometry(0, 0, rect.width(), rect.height())
 app.exec_()
