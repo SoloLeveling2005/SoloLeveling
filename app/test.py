@@ -307,3 +307,5 @@ window = MainWindow()
 window.setGeometry(0, 0, rect.width(), rect.height())
 window.setStyleSheet("padding:0;")
 app.exec_()
+
+

@@ -3,7 +3,7 @@
 #     print('URL changed:', url.toString())
 #
 # page.urlChanged.connect(on_url_changed)
-
+from PyQt5 import QtCore
 
 # importing required libraries
 from PyQt5.QtCore import *
@@ -22,25 +22,31 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         # получаем размеры экрана
         self.browser = None
+
         desktop_info = app.desktop()
         self.rect = desktop_info.availableGeometry()
+
         # начальные настройки
         self.setWindowTitle("SoloLeveling")
-        self.setCorner(Qt.BottomRightCorner, Qt.RightDockWidgetArea)
-        self.setWindowFlags(Qt.CustomizeWindowHint)
+        # self.setCorner(Qt.BottomRightCorner, Qt.RightDockWidgetArea)
+        # self.setWindowFlags(Qt.CustomizeWindowHint)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.CustomizeWindowHint | Qt.Window)
         self.setContentsMargins(0, 0, 0, 0)
         self.setMaximumHeight(QApplication.desktop().availableGeometry().height())
         self.setGeometry(0, 0, self.rect.width(), self.rect.height())
-        self.setStyleSheet("background-color:#202124;")
+        self.setStyleSheet("background-color:black; padding:0; margin:0;")
+        # self.pressing = False
+        # self.start = QPoint(0, 0)
+        # self.oldPos = self.pos()
 
         grip = QSizeGrip(self)
-        grip.setVisible(True)
+        # grip.setVisible(True)
         grip.setStyleSheet("padding:0; margin:0;")
 
         # Создаем виджет вкладок
         self.tabs = QTabWidget()
         self.tabs.setDocumentMode(True)
-        self.tabs.setStyleSheet("background-color:#202124; margin:0; padding:0;")
+        self.tabs.setStyleSheet("background-color:#202124; margin:0; padding:0;padding-top:20px;")
         self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleclick)
         self.tabs.currentChanged.connect(self.current_tab_changed)
         self.tabs.setTabsClosable(True)
@@ -61,6 +67,8 @@ class MainWindow(QMainWindow):
         self.tabs.setStyleSheet("""
                                     * {
                                         font-size:18px;
+                                        padding:0;
+                                        margin:0;
                                     }
                                     
                                     
@@ -69,10 +77,11 @@ class MainWindow(QMainWindow):
                                         color: white;
                                         padding: 8px 12px;
                                         margin:0;
+                                        border-right:2px solid #444654;
                                     }
                                     QTabBar::tab:selected {
                                         background-color: black;
-                                        border-color: white;
+                                        
                                         
                                     }
                                     QTabWidget::pane {border: 0;padding:0;margin:0;}
@@ -111,7 +120,7 @@ class MainWindow(QMainWindow):
 
         # создаем поле в котором отображается url и где делают запросы
         self.url_bar = QLineEdit()
-        self.url_bar.setStyleSheet("padding:4px 10px; border-radius:6px; border:1px solid white;")
+        self.url_bar.setStyleSheet("border-radius:6px; border:1px solid white;")
         self.url_bar.returnPressed.connect(self.navigate_to_url)
 
         self.tool_bar.addWidget(self.url_bar)
@@ -145,6 +154,7 @@ class MainWindow(QMainWindow):
 
         # создаем новый toolbar для каждой вкладки
         tool_bar = self.new_toolbar()
+
 
         browser = QWebEngineView()
         layout = QVBoxLayout()
@@ -256,10 +266,14 @@ class MainWindow(QMainWindow):
     def mouseMoveEvent(self, event):
         # Перетаскиваем окно, если левая кнопка мыши была нажата и перемещена на новые координаты
         if event.buttons() == Qt.LeftButton:
+            print(self.frameGeometry())
             x = event.globalX()
             y = event.globalY()
-            print(x - self.offset.x(), y - self.offset.y())
-            self.move(x - self.offset.x(), y - self.offset.y())
+            # print(x - self.offset.x(), y - self.offset.y())
+            try:
+                self.move(x - self.offset.x(), y - self.offset.y())
+            except:
+                pass
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -280,10 +294,12 @@ class MainWindow(QMainWindow):
 
 # todo Program running
 app = QApplication(sys.argv)
-app.setStyleSheet("padding-top:200px;")
+app.setStyleSheet("")
+
 desktop = app.desktop()
 rect = desktop.availableGeometry()
+
 window = MainWindow()
-window.setContentsMargins(0,0,0,0)
+window.setContentsMargins(2,2,2,2)
 window.setGeometry(0, 0, rect.width(), rect.height())
 app.exec_()
