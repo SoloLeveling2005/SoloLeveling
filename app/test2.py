@@ -1,4 +1,3 @@
-
 # def on_url_changed(url):
 #     print('URL changed:', url.toString())
 #
@@ -14,6 +13,7 @@ from PyQt5.QtPrintSupport import *
 import os
 import sys
 
+
 # main window
 class MainWindow(QMainWindow):
 
@@ -25,6 +25,9 @@ class MainWindow(QMainWindow):
 
         desktop_info = app.desktop()
         self.rect = desktop_info.availableGeometry()
+        # скрыть, закрыть, свернуть
+
+
 
         # начальные настройки
         self.setWindowTitle("SoloLeveling")
@@ -34,7 +37,7 @@ class MainWindow(QMainWindow):
         self.setContentsMargins(0, 0, 0, 0)
         self.setMaximumHeight(QApplication.desktop().availableGeometry().height())
         self.setGeometry(0, 0, self.rect.width(), self.rect.height())
-        self.setStyleSheet("background-color:black; padding:0; margin:0;")
+        self.setStyleSheet("background-color:black; padding:0; margin:0; ")
         # self.pressing = False
         # self.start = QPoint(0, 0)
         # self.oldPos = self.pos()
@@ -42,6 +45,29 @@ class MainWindow(QMainWindow):
         grip = QSizeGrip(self)
         # grip.setVisible(True)
         grip.setStyleSheet("padding:0; margin:0;")
+
+        self.btn1 = self.absolute_create_icon_button(icon_url="roll_up_in_window.png",
+                                                     action=self.showMinimized,
+                                                     styles="width:3px;margin:3px;")
+
+        self.btn2 = self.absolute_create_icon_button(icon_url="roll_up.png",
+                                                     action=self.maximize,
+                                                     styles="width:3px;margin:3px;")
+
+        self.btn3 = self.absolute_create_icon_button(icon_url="close.png",
+                                                     action=self.close,
+                                                     styles="width:3px;margin:3px;")
+
+        button1 = QPushButton("Кнопка 1")
+        button2 = QPushButton("Кнопка 2")
+        button3 = QPushButton("Кнопка 3")
+        layout = QHBoxLayout()
+        layout.setAlignment(Qt.AlignTop | Qt.AlignRight)
+        layout.addWidget(button1)
+        layout.addWidget(button2)
+        layout.addWidget(button3)
+
+        self.setLayout(layout)
 
         # Создаем виджет вкладок
         self.tabs = QTabWidget()
@@ -125,19 +151,26 @@ class MainWindow(QMainWindow):
 
         self.tool_bar.addWidget(self.url_bar)
 
-        # скрыть, закрыть, свернуть
-        self.create_icon_button(icon_url="roll_up_in_window.png",
-                                action=self.showMinimized,
-                                styles="width:10px;margin:3px;")
 
-        self.create_icon_button(icon_url="roll_up.png",
-                                action=self.maximize,
-                                styles="width:10px;margin:3px;")
 
-        self.create_icon_button(icon_url="close.png",
-                                action=self.close,
-                                styles="width:10px;margin:3px;")
         return self.tool_bar
+
+
+    def absolute_create_icon_button(self, icon_url: str, action, styles: str):
+        icon = QIcon(icon_url)
+        button = QToolButton()
+        button.clicked.connect(action)
+        button.setStyleSheet(styles)
+        button.setIcon(icon)
+
+        # Установка координат для каждой кнопки
+        button1 = QToolButton(self)
+        button1.clicked.connect(action)
+        button1.setStyleSheet(styles)
+        button1.setIcon(icon)
+
+        return button1
+
     # создание кнопки с иконой
     def create_icon_button(self, icon_url: str, action, styles: str):
         icon = QIcon(icon_url)
@@ -155,12 +188,11 @@ class MainWindow(QMainWindow):
         # создаем новый toolbar для каждой вкладки
         tool_bar = self.new_toolbar()
 
-
         browser = QWebEngineView()
         layout = QVBoxLayout()
         layout.addWidget(tool_bar)
         layout.addWidget(browser)
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0, 0, 0, 0)
         browser.load(QUrl(qurl))
 
         widget = QWidget()
@@ -200,6 +232,7 @@ class MainWindow(QMainWindow):
             self.update_title(self.tabs.currentWidget())
         except:
             pass
+
     # закрытие вкладки
     def close_current_tab(self, i):
 
@@ -259,11 +292,13 @@ class MainWindow(QMainWindow):
 
     # функции управления окном браузера
     def mousePressEvent(self, event):
+        print("click")
         # Получаем начальные координаты мыши при нажатии на левую кнопку мыши
         if event.button() == Qt.LeftButton:
             self.offset = event.pos()
 
     def mouseMoveEvent(self, event):
+        print("click")
         # Перетаскиваем окно, если левая кнопка мыши была нажата и перемещена на новые координаты
         if event.buttons() == Qt.LeftButton:
             print(self.frameGeometry())
@@ -276,6 +311,7 @@ class MainWindow(QMainWindow):
                 pass
 
     def mouseReleaseEvent(self, event):
+        print("click")
         if event.button() == Qt.LeftButton:
             self.mousePressed = False
             event.accept()
@@ -300,6 +336,6 @@ desktop = app.desktop()
 rect = desktop.availableGeometry()
 
 window = MainWindow()
-window.setContentsMargins(2,2,2,2)
+window.setContentsMargins(0,2,0,0)
 window.setGeometry(0, 0, rect.width(), rect.height())
 app.exec_()
