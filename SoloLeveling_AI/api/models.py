@@ -10,7 +10,7 @@ class User(models.Model):
     token = models.CharField(max_length=100)
 
 
-class Requests_history(models.Model):
+class Room(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     data = models.JSONField()
 

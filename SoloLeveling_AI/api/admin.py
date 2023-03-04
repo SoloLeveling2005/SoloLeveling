@@ -47,7 +47,7 @@ admin.site.register(models.User, User)
 
 
 
-class Requests_history(admin.ModelAdmin):
+class Room(admin.ModelAdmin):
     """
     Настройки отображения, фильтрации и поиска модели:'Todo' на панели администратора
     """
@@ -83,4 +83,4 @@ class Requests_history(admin.ModelAdmin):
     ]
 
 
-admin.site.register(models.Requests_history, Requests_history)
+admin.site.register(models.Room, Room)
