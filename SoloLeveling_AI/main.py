@@ -52,10 +52,10 @@ tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 model = TFGPT2LMHeadModel.from_pretrained("gpt2", pad_token_id=tokenizer.eos_token_id)
 from transformers import pipeline
 # print(pipeline('sentiment-analysis')('we love you'))
-input_ids = tokenizer.encode('I enjoy walking with my cute dog', return_tensors='tf')
+input_ids = tokenizer.encode('Сколько будет 2+2', return_tensors='tf')
 
 # generate text until the output length (which includes the context length) reaches 50
-greedy_output = model.generate(input_ids, max_length=50)
+greedy_output = model.generate(input_ids, max_length=100)
 
-print("Output:\n" + 100 * '-')
+# print("Output:\n" + 100 * '-')
 print(tokenizer.decode(greedy_output[0], skip_special_tokens=True))

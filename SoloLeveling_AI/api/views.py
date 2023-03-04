@@ -12,6 +12,9 @@ import openai
 import requests
 from api import models
 
+from modules.MY_OpenAI import openAI_search_in_three_options
+
+
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
@@ -39,6 +42,7 @@ def openAI(history, message):
     history.append({"role": "assistant", "content": assistant_answer})
     return history, assistant_answer
 
+
 # Create your views here.
 
 @api_view(http_method_names=["POST", "GET"])
@@ -64,7 +68,7 @@ def request_ai(request):
             print(e)
             history, assistant_answer = openAI([], user_message)
             request_data = models.Room.objects.create(user_id=user,
-                                                                  data=json.dumps({'data': history}))
+                                                      data=json.dumps({'data': history}))
             request_data = request_data.data
             data = [i for i in json.loads(request_data)['data']]
 
@@ -81,36 +85,16 @@ def request_ai(request):
             data = []
         # openAI(data, "Hello")
         return Response(data={'data': data}, status=status.HTTP_200_OK)
+
+
 #     {"message":"123"}
 
-
-
-def openAI_search(message):
-    """
-    Принимает на вход сообщение на которое надо ответить
-    Возвращает сообщение ответ
-    """
-
-    history = [{"role": "user", "content": message}]
-
-    url = "https://api.openai.com/v1/chat/completions"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {AI_TOKEN}"
-    }
-    data = {
-        "model": "gpt-3.5-turbo",
-        "messages": history
-    }
-
-    response = requests.post(url, headers=headers, json=data)
-
-    assistant_answer = json.loads(response.text)['choices'][0]['message']['content']
-
-    return assistant_answer
 
 @api_view(http_method_names=["POST", "GET"])
 @permission_classes((permissions.AllowAny,))
 def search(request):
+    if request.method == "POST":
+        message = request.data['message']
+        data = openAI_search_in_three_options(AI_TOKEN=AI_TOKEN, message=message)
 
-
+        return Response(data={'data': data}, status=status.HTTP_200_OK)

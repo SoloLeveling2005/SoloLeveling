@@ -8,7 +8,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 
-    re_path(r'^request_ai/$', views.request_ai, name='request_ai')
+    re_path(r'^request_ai/$', views.request_ai, name='request_ai'),
+    re_path(r'^search/$',
+            views.search,
+            name='search')
 
     # path(r'api1/', views.index1, name="index1"),
     # path('csrf_token/', GetCSRFToken.as_view())
