@@ -30,6 +30,7 @@ def openAI_search_in_three_options(AI_TOKEN, message):
         "messages": [{"role": "user", "content": message}]
     }
     response = requests.post(url, headers=headers, json=data)
+
     answer_user = json.loads(response.text)['choices'][0]['message']['content']
     assistant_answers.append({f"{message}": answer_user})
 
