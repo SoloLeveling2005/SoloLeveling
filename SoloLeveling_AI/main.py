@@ -77,28 +77,23 @@
 import os
 import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = "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"
 
 response = openai.Completion.create(
   model="text-davinci-003",
-  prompt="Напиши небольшого телеграмм бота на питон.",
+  prompt="Write a small telegram bot on python.",
   temperature=0.7,
   max_tokens=256,
   top_p=1,
   frequency_penalty=0,
   presence_penalty=0
 )
-
+answer = response['choices'][0]['text']
+print(answer)
 from googletrans import Translator
 translator = Translator()
 # translator.translate('안녕하세요.')
-code = """
-Hello world in python
-
-
-print('Hello world')
-
-"""
+code = answer
 print(translator.translate(code, dest='ru').text)
 
 
