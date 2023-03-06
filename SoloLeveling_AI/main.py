@@ -71,29 +71,32 @@
 # from transformers import GPT2TokenizerFast
 #
 # tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
-# print(tokenizer("Привет мир")['input_ids'])
+# # print(tokenizer("Привет мир")['input_ids'])
 # print(tokenizer("Hello world")['input_ids'])
 
-import os
-import openai
+# todo перевод текста
+# import os
+# import openai
+#
+# openai.api_key = "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"
+#
+# response = openai.Completion.create(
+#   model="text-davinci-003",
+#   prompt="Write a small telegram bot on python.",
+#   temperature=0.7,
+#   max_tokens=256,
+#   top_p=1,
+#   frequency_penalty=0,
+#   presence_penalty=0
+# )
+# answer = response['choices'][0]['text']
+# print(answer)
+# from googletrans import Translator
+# translator = Translator()
+# # translator.translate('안녕하세요.')
+# code = answer
+# print(translator.translate(code, dest='ru').text)
 
-openai.api_key = "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"
 
-response = openai.Completion.create(
-  model="text-davinci-003",
-  prompt="Write a small telegram bot on python.",
-  temperature=0.7,
-  max_tokens=256,
-  top_p=1,
-  frequency_penalty=0,
-  presence_penalty=0
-)
-answer = response['choices'][0]['text']
-print(answer)
-from googletrans import Translator
-translator = Translator()
-# translator.translate('안녕하세요.')
-code = answer
-print(translator.translate(code, dest='ru').text)
 
 

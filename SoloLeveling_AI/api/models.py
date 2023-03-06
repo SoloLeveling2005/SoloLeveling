@@ -12,8 +12,15 @@ class User(models.Model):
     token = models.CharField(max_length=100)
 
 
-class Room(models.Model):
+class UserBalance(models.Model):
+    # id - user_balance_id
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    balance_count = models.BigIntegerField()
+    tariff = models.CharField(max_length=100)
+
+
+class Token(models.Model):
     # id - room_id
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    data = models.TextField()
-
+    token_question = models.CharField(max_length=100)
+    token_answer = models.CharField(max_length=100)
