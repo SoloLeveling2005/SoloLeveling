@@ -11,13 +11,15 @@ class User(admin.ModelAdmin):
         'id',
         'username',
         'password',
-        'token'
+        'user_token',
+        'created_at'
     )
     list_display_links = (
         'id',
         'username',
         'password',
-        'token'
+        'user_token',
+        'created_at'
     )
     list_editable = (
 
@@ -26,28 +28,29 @@ class User(admin.ModelAdmin):
         'id',
         'username',
         'password',
-        'token'
+        'user_token',
+        'created_at'
     )
     fieldsets = (
         ('Основное', {'fields': (
             'username',
             'password',
-            'token'
+            'user_token',
         )}),
     )
     search_fields = [
         'id',
         'username',
         'password',
-        'token'
+        'user_token',
+        'created_at'
     ]
 
 
 admin.site.register(models.User, User)
 
 
-
-class Room(admin.ModelAdmin):
+class UserBalance(admin.ModelAdmin):
     """
     Настройки отображения, фильтрации и поиска модели:'Todo' на панели администратора
     """
@@ -55,12 +58,14 @@ class Room(admin.ModelAdmin):
     list_display = (
         'id',
         'user_id',
-        'data',
+        'balance_count',
+        'tariff'
     )
     list_display_links = (
         'id',
         'user_id',
-        'data',
+        'balance_count',
+        'tariff'
     )
     list_editable = (
 
@@ -68,19 +73,65 @@ class Room(admin.ModelAdmin):
     list_filter = (
         'id',
         'user_id',
-        'data',
+        'balance_count',
+        'tariff'
     )
     fieldsets = (
         ('Основное', {'fields': (
             'user_id',
-            'data',
+            'balance_count',
+            'tariff'
         )}),
     )
     search_fields = [
         'id',
         'user_id',
-        'data',
+        'balance_count',
+        'tariff'
     ]
 
 
-admin.site.register(models.Room, Room)
+admin.site.register(models.UserBalance, UserBalance)
+
+
+class Token(admin.ModelAdmin):
+    """
+    Настройки отображения, фильтрации и поиска модели:'Todo' на панели администратора
+    """
+
+    list_display = (
+        'id',
+        'user_id',
+        'score',
+        'created_at'
+    )
+    list_display_links = (
+        'id',
+        'user_id',
+        'score',
+        'created_at'
+    )
+    list_editable = (
+
+    )
+    list_filter = (
+        'id',
+        'user_id',
+        'score',
+        'created_at'
+    )
+    fieldsets = (
+        ('Основное', {'fields': (
+            'user_id',
+            'score',
+        )}),
+    )
+    search_fields = [
+        'id',
+        'user_id',
+        'score',
+        'created_at'
+    ]
+
+
+admin.site.register(models.Token, Token)

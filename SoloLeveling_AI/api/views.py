@@ -1,16 +1,31 @@
-import json
-
-from django.shortcuts import render
+# Подгружаем модули
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-import json
-import os
+from django.shortcuts import render
 from dotenv import load_dotenv
+from api import models
+import requests
 import sqlite3
 import openai
-import requests
-from api import models
+import json
+import os
+
+load_dotenv()
+
+# Вытаскиваем секретные данные с виртуального окружения
+TOKEN = os.getenv('TOKEN')
+AI_TOKEN = os.getenv('AI_TOKEN')
+
+
+# todo authorization and registration
+def registration(request):
+    pass
+
+
+def login(request):
+    pass
+
 
 def openAI_search_in_three_options(AI_TOKEN, message):
     """
@@ -58,13 +73,6 @@ def openAI_search_in_three_options(AI_TOKEN, message):
     #     assistant_answers.append({f"{i}": answer_child})
 
     return assistant_answers
-
-
-
-load_dotenv()
-
-TOKEN = os.getenv('TOKEN')
-AI_TOKEN = os.getenv('AI_TOKEN')
 
 
 def openAI(history, message):

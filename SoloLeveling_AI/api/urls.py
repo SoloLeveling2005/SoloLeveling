@@ -7,7 +7,12 @@ from django.conf.urls.static import static
 # from django_api.views import GetCSRFToken
 
 urlpatterns = [
+    # todo authorization and registration
+    re_path(r'^login/$', views.login, name='login'),
+    re_path(r'^logout/$', views.logout, name='logout'),
+    re_path(r'^auth/$', views.auth, name='auth'),
 
+    # todo work url
     re_path(r'^request_ai/$', views.request_ai, name='request_ai'),
     re_path(r'^search/$',
             views.search,

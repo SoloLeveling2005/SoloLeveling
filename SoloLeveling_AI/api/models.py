@@ -9,7 +9,9 @@ class User(models.Model):
     username = models.CharField(max_length=100)
     gmail = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    token = models.CharField(max_length=100)
+    user_token = models.CharField(max_length=100)
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class UserBalance(models.Model):
@@ -22,5 +24,8 @@ class UserBalance(models.Model):
 class Token(models.Model):
     # id - room_id
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    token_question = models.CharField(max_length=100)
-    token_answer = models.CharField(max_length=100)
+    # todo сколько токен потребили. num_tokens(prompt) + max_tokens * max(n, best_of)
+    #  -> сколько токенов подали + сколько токенов макс на вывод
+    score = models.CharField(max_length=100)
+
+    created_at = models.DateTimeField(auto_now_add=True)
