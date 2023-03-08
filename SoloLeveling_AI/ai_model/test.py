@@ -1,30 +1,30 @@
-# torch -> pip3 install --pre torch -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-# the package we'll use to send an HTTP request to Hugging Face's
-# API
-import json
+import tensorflow as tf
+from tensorflow.keras.layers import LSTM, Dense, Embedding
+from tensorflow.keras.models import Sequential
 
-from datasets import load_dataset
+# Define the model architecture
+model = Sequential([
+    Embedding(vocab_size, embedding_dim, input_length=max_length),
+    LSTM(units=128),
+    Dense(units=vocab_size, activation='softmax')
+])
 
-squad = load_dataset("squad", split="train[:5000]")
+# Compile the model
+model.compile(loss='categorical_crossentropy', optimizer='adam')
 
-squad = squad.train_test_split(test_size=0.2)
-datas = {'intents': [{
-        'tag': data['title'] + "_" + data['id'][:10],
-        'patterns': [data['question']],
-        'responses': [data['answers']['text'][0]],
-        "context_set": ""
-    } for data in squad["train"]]}
+# Train the model
+model.fit(X_train, y_train, batch_size=128, epochs=10)
 
-with open('intents.json', 'w') as outfile:
-    json.dump(datas, outfile)
-
-# data = {
-#     'id': '56cd687562d2951400fa6592',
-#     'title': 'IPod',
-#     'context': 'On January 8, 2004, Hewlett-Packard (HP) announced that they would sell HP-branded iPods under a license agreement from Apple. Several new retail channels were used—including Wal-Mart—and these iPods eventually made up 5% of all iPod sales. In July 2005, HP stopped selling iPods due to unfavorable terms and conditions imposed by Apple.',
-#     'question': 'When did HP unveil their own edition of the iPod?',
-#     'answers': {
-#         'text': ['January 8, 2004'],
-#         'answer_start': [3]
-#     }
-# }
+# Generate text from the trained model
+seed_text = "The quick brown fox"
+for i in range(10):
+    x = tokenizer.texts_to_sequences([seed_text])[0]
+    x = tf.keras.preprocessing.sequence.pad_sequences([x], maxlen=max_length-1, padding='pre')
+    predicted = model.predict_classes(x)
+    output_word = ""
+    for word,index in tokenizer.word_index.items():
+        if index == predicted:
+            output_word = word
+            break
+    seed_text += " " + output_word
+print(seed_text)

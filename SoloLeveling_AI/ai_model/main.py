@@ -184,6 +184,7 @@ def predict_class(sentence):
     results.sort(key=lambda x: x[1], reverse=True)
     return_list = []
     for r in results:
+        print(r)
         return_list.append({'intent': classes[r[0]], 'probability': str(r[1])})
     return return_list
 
@@ -200,6 +201,10 @@ def get_response(ints, intents_json):
 
 while True:
     message = input("I: ")
-    ints = predict_class(message)
-    res = get_response(ints, intents)
-    print(res)
+    output_message = ""
+    messages = message.split('.')
+    for message in messages:
+        ints = predict_class(message)
+        res = get_response(ints, intents)
+        output_message += res + "\n"
+    print(output_message)
