@@ -27,7 +27,7 @@ API_TOKEN = ""
 
 def query(payload='', parameters=None, options={'use_cache': False}):
     API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B"
-    headers = {"Authorization": f"Bearer {API_TOKEN}"}
+    headers = {"Authorization": f"Bearer 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"}
     body = {"inputs": payload, 'parameters': parameters, 'options': options}
     response = requests.request("POST", API_URL, headers=headers, data=json.dumps(body))
     try:
@@ -39,11 +39,55 @@ def query(payload='', parameters=None, options={'use_cache': False}):
 
 
 parameters = {
-    'max_new_tokens': 25,  # number of generated tokens
-    'temperature': 0.5,  # controlling the randomness of generations
+    'max_new_tokens': 1,  # number of generated tokens
+    'temperature': 0.8,  # controlling the randomness of generations
     'end_sequence': "###"  # stopping sequence for generation
 }
 
-prompt = "...."  # few-shot prompt
+# few-shot prompt
+prompt = """
+Write in the language in which they write to you.
+###
+You are a chatbot answering questions and generating answers.
+###
+start writing from a new line as a second person.
+###
+An example of how to answer questions:
 
-data = query(prompt, parameters, options)
+User: Hello
+Bot: Hello
+###
+User: How are you?
+Bot: Good
+###
+User: What are you doing?
+Bot: Homework
+###
+User: What kind of homework?
+Bot: Math
+###
+User: Hello. How are you?
+Bot: Hi. Well, how are you?
+###
+User: And I'm fine. What are you doing?
+Bot: I'm going to training, are you?
+###
+User: Can you help me with my math homework?
+Bot: Sure, I'll do my best to assist you. What's the problem you're working on?
+###
+User: How do I solve for X in this equation: 2X + 5 = 15?
+Bot: To solve for X, you want to isolate it on one side of the equation. First, subtract 5 from both sides of the equation: 2X = 10. Then, divide both sides by 2: X = 5. Therefore, X equals 5.
+###
+User: What's the capital of France?
+Bot: The capital of France is Paris.
+###
+"""
+"Hello. What do you doing?"
+
+
+while True:
+    input_data = input('A: ')
+    prompt += f"User: {input_data}\nBot:"
+    data = query(prompt, parameters)
+    prompt = data[:-3] + "\n"
+    print(prompt)
