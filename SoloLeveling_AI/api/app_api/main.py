@@ -41,50 +41,15 @@ def query(payload='', parameters=None, options={'use_cache': False}):
 
 
 parameters = {
-    'max_new_tokens': 100,  # number of generated tokens
+    'max_new_tokens': 200,  # number of generated tokens
     'temperature': 0.8,  # controlling the randomness of generations
     'end_sequence': "###"  # stopping sequence for generation
 }
 
 # few-shot prompt
 prompt1 = """
-Write in the language in which they write to you.
-###
-You are a chatbot answering questions and generating answers.
-###
-start writing from a new line as a second person.
-###
-An example of how to answer questions:
-
-User: Hello
-Bot: Hello
-###
-User: How are you?
-Bot: Good
-###
-User: What are you doing?
-Bot: Homework
-###
-User: What kind of homework?
-Bot: Math
-###
-User: Hello. How are you?
-Bot: Hi. Well, how are you?
-###
-User: And I'm fine. What are you doing?
-Bot: I'm going to training, are you?
-###
-User: Can you help me with my math homework?
-Bot: Sure, I'll do my best to assist you. What's the problem you're working on?
-###
-User: How do I solve for X in this equation: 2X + 5 = 15?
-Bot: To solve for X, you want to isolate it on one side of the equation. First, subtract 5 from both sides of the equation: 2X = 10. Then, divide both sides by 2: X = 5. Therefore, X equals 5.
-###
-User: What's the capital of France?
-Bot: The capital of France is Paris.
-###
+Write a short story about a person who discovers they have a special ability, but soon realizes that it comes with a terrible cost.
 """
-"Hello. What do you doing?"
 
 prompt2 = """
 Write in the language in which they write to you.
@@ -344,9 +309,154 @@ person.introduce()
 This code creates an object of the Person class with the name "Alice" and the age of 25. Then the introduce method is called, which outputs the message "Hi, my name is Alice and I am 25 years old."
 ###
 """
-while True:
-    input_data = input('User: ')
-    prompt += f"User: {input_data}\nBot:"
-    data = query(prompt, parameters)
-    prompt = data + "\n"
-    print(data)
+
+prompt_for_programmer = """
+You are a chatbot answering questions and generating answers.
+###
+An example of how to answer questions:
+U: Что такое SQL и какие операции можно выполнить с помощью этого языка запросов?
+B: SQL (Structured Query Language) - это язык запросов для работы с реляционными базами данных. С помощью SQL можно выполнить множество операций, включая выборку данных из таблицы, добавление, обновление и удаление данных, создание и удаление таблиц и многое другое.
+###
+U: Как добавить элемент в конец списка в Python?
+B: Можно использовать метод append(). Например:
+python```
+fruits = ["apple", "banana", "cherry"]
+fruits.append("orange")
+print(fruits)
+```
+###
+U: Как создать класс в JavaScript?
+B: Можно использовать ключевое слово class. Например:
+javascript```
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  sayHello() {
+    console.log(`Привет, меня зовут ${this.name} и мне ${this.age} лет`);
+  }
+}
+let person = new Person("Иван", 25);
+person.sayHello();
+```
+###
+U: Hello.
+B: 
+"""
+# data = query(prompt_for_programmer, parameters)
+# print(data)
+# # while True:
+# #     input_data = input('User: ')
+# #     prompt += f"User: {input_data}\nBot:"
+# #     data = query(prompt_for_programmer, parameters)
+# #     prompt = data + "\n"
+# #     print(data)
+# from transformers import pipeline, set_seed
+# generator = pipeline('text-generation', model='gpt2', cache_dir="./")
+# set_seed(42)
+# output = generator(prompt_for_programmer, max_length=30, num_return_sequences=5)
+import win32process
+# Get the current process handle
+pid = win32process.GetCurrentProcess()
+
+# Set the process memory limit to 100 MB
+win32process.SetProcessWorkingSetSize(pid, 1, 2*1024*1024*1024)
+
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    LogitsProcessorList,
+    MinLengthLogitsProcessor,
+    TopKLogitsWarper,
+    TemperatureLogitsWarper,
+    StoppingCriteriaList,
+    MaxLengthCriteria,
+)
+import torch
+
+tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-2.7B", cache_dir="./")
+model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-neo-2.7B", cache_dir="./")
+
+# set pad_token_id to eos_token_id because GPT2 does not have a EOS token
+model.config.pad_token_id = model.config.eos_token_id
+model.generation_config.pad_token_id = model.config.eos_token_id
+# set up loop to generate responses to user prompts
+prompt = """
+User: Hello.
+Bot: Hello.
+User: How are you?
+Bot:
+"""
+input_ids = tokenizer.encode(prompt, return_tensors="pt")
+
+# generate response with custom settings
+output = model.generate(
+    input_ids=input_ids,
+    max_length=50,
+    num_beams=5,
+    temperature=0.8,
+    top_k=50,
+    no_repeat_ngram_size=2,
+    early_stopping=True
+)
+response = tokenizer.decode(output[0], skip_special_tokens=True)
+
+# display response
+print(response)
+# while True:
+#     # get user input
+#     prompt = input("You: ")
+#     prompt = f"""
+# User:
+# {prompt}
+# Bot:
+#     """
+#     # encode prompt
+#     # encode prompt
+#     input_ids = tokenizer.encode(prompt, return_tensors="pt")
+#
+#     # generate response with custom settings
+#     output = model.generate(
+#         input_ids=input_ids,
+#         max_length=50,
+#         num_beams=5,
+#         temperature=0.8,
+#         top_k=50,
+#         no_repeat_ngram_size=2,
+#         early_stopping=True
+#     )
+#     response = tokenizer.decode(output[0], skip_special_tokens=True)
+#
+#     # display response
+#     print(response)
+# input_prompt = prompt1
+# input_ids = tokenizer(input_prompt, return_tensors="pt").input_ids
+#
+# # instantiate logits processors
+# logits_processor = LogitsProcessorList(
+#     [
+#         MinLengthLogitsProcessor(50, eos_token_id=model.generation_config.eos_token_id),
+#     ]
+# )
+# # instantiate logits processors
+# logits_warper = LogitsProcessorList(
+#     [
+#         TopKLogitsWarper(50),
+#         TemperatureLogitsWarper(0.7),
+#     ]
+# )
+#
+# stopping_criteria = StoppingCriteriaList([MaxLengthCriteria(max_length=50)])
+#
+# torch.manual_seed(0)
+# outputs = model.sample(
+#     input_ids,
+#     logits_processor=logits_processor,
+#     logits_warper=logits_warper,
+#     stopping_criteria=stopping_criteria,
+# )
+#
+# output = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+#
+# print(output)
