@@ -19,25 +19,25 @@
 Надеюсь, эти советы помогут тебе начать реализацию своей идеи. Удачи!
 """
 
-import json
-import requests
+# import json
+# import requests
 
-API_TOKEN = ""
+# API_TOKEN = ""
 
 
-def query(payload='', parameters=None, options={'use_cache': False}):
-    API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B"
-    headers = {"Authorization": f"Bearer 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"}
-    body = {"inputs": payload, 'parameters': parameters, 'options': options}
-    response = requests.request("POST", API_URL, headers=headers, data=json.dumps(body))
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        return "Error:" + " ".join(response.json()['error'])
-    else:
-        response_data = response.json()
-        print(response_data)
-        return response_data[0]['generated_text']
+# def query(payload='', parameters=None, options={'use_cache': False}):
+#     API_URL = "https://api-inference.huggingface.co/models/EleutherAI/gpt-neo-2.7B"
+#     headers = {"Authorization": f"Bearer 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"}
+#     body = {"inputs": payload, 'parameters': parameters, 'options': options}
+#     response = requests.request("POST", API_URL, headers=headers, data=json.dumps(body))
+#     try:
+#         response.raise_for_status()
+#     except requests.exceptions.HTTPError:
+#         return "Error:" + " ".join(response.json()['error'])
+#     else:
+#         response_data = response.json()
+#         print(response_data)
+#         return response_data[0]['generated_text']
 
 
 parameters = {
@@ -356,12 +356,6 @@ B:
 # generator = pipeline('text-generation', model='gpt2', cache_dir="./")
 # set_seed(42)
 # output = generator(prompt_for_programmer, max_length=30, num_return_sequences=5)
-import win32process
-# Get the current process handle
-pid = win32process.GetCurrentProcess()
-
-# Set the process memory limit to 100 MB
-win32process.SetProcessWorkingSetSize(pid, 1, 2*1024*1024*1024)
 
 from transformers import (
     AutoTokenizer,
@@ -375,12 +369,26 @@ from transformers import (
 )
 import torch
 
-tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-2.7B", cache_dir="./")
-model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-neo-2.7B", cache_dir="./")
+# todo gpt-neo-2.7B
+# tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-2.7B", cache_dir="./")
+# model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-neo-2.7B", cache_dir="./")
 
-# set pad_token_id to eos_token_id because GPT2 does not have a EOS token
-model.config.pad_token_id = model.config.eos_token_id
-model.generation_config.pad_token_id = model.config.eos_token_id
+# # set pad_token_id to eos_token_id because GPT2 does not have a EOS token
+# model.config.pad_token_id = model.config.eos_token_id
+# model.generation_config.pad_token_id = model.config.eos_token_id
+
+
+# todo GPT-NeoXT-Chat-Base-20B
+from transformers import AutoTokenizer, AutoModelForCausalLM
+tokenizer = AutoTokenizer.from_pretrained("togethercomputer/GPT-NeoXT-Chat-Base-20B")
+model = AutoModelForCausalLM.from_pretrained("togethercomputer/GPT-NeoXT-Chat-Base-20B")
+
+
+# todo gpt-j-6B
+# from transformers import AutoTokenizer, AutoModelForCausalLM
+# tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6B")
+# model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6B")
+
 # set up loop to generate responses to user prompts
 prompt = """
 User: Hello.
